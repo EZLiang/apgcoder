@@ -42,7 +42,7 @@
       a:hover {
         text-decoration: underline;
       }
-      #code0, #code1, #view {
+      #code1 {
         display: none;
         width: 560px;
       }
@@ -57,6 +57,7 @@
       #viewspace {
         width: 550px;
         margin: 20px;
+        display: none;
       }
     </style>
   </head>
@@ -106,8 +107,7 @@
       var rle = cells_to_rle(decodeCanon("xp0_" + data.text)).replace("B3/S23", data.rule).replace("<br>", "\n");
       document.getElementById("code0").innerText = rle;
       document.getElementById("code1").innerText = rle + "\n#C [[ THEME 6 GPS 20 ]]";
-      document.getElementById("code0").style = "display: inherit;";
-      document.getElementById("view").style = "display: inherit;";
+      document.getElementById("viewspace").style = "display: inherit;";
     })(loc);
   </script>
   <script src="http://catagolue.appspot.com/js/lv-plugin.js"></script>
