@@ -5,8 +5,29 @@
     <title>Apg coder</title>
     <meta name="LifeViewer" content="viewer code">
     <style>
+      body {
+        width: 640px;
+      }
+      div.codebox {
+        font-family: 'Courier New', Courier, monospace;
+        background-color: #FFFFFF;
+        border: 1px solid #d8d8d8;
+        width: 560px !important;
+        display: inherit;
+      }
+      div.selall {
+        text-transform: uppercase;
+        border-bottom: 1px solid #CCCCCC;
+        font-size: 0.8em;
+        font-weight: bold;
+        display: inherit
+      }
       * {
-        cursor: pointer;
+        cursor: auto;
+        text-align: center !important;
+        align-items: center !important;
+        align-self: center !important;
+        align-content: center !important;
       }
       *:not(pre, code) {
         font-family: Arial, Helvetica, sans-serif;
@@ -21,46 +42,73 @@
       a:hover {
         text-decoration: underline;
       }
+      #code0, #code1, #view {
+        display: none;
+        width: 560px;
+      }
+      fieldset {
+        width: 600px;
+        padding: 20px;
+      }
+      canvas {
+        width: 560px !important;
+        height: 300px !important;
+      }
+      #viewspace {
+        width: 550px;
+        margin: 20px;
+      }
     </style>
   </head>
   <body>
     <h1>APGcoder</h1>
-    <p>APGcode is from <a href="https://catagolue.appsopt.com/">Catagolue</a>.</p>
-    <form>
+    <p>APGcode is from <a href="https://catagolue.appspot.com/">Catagolue</a>.</p>
+    <form method="GET">
       <fieldset>
         <legend>APGcoding</legend>
-        <p>Enter text: <input type="text" id="text" /></p>
-        <p>Enter rule: B<input type="text" id="b" />/S<input type="text" id="b" /></p>
-        <div id="viewspace"></div>
-        <button id="go">Go!</button>
+        <p>Enter text: <input name="text" type="text" id="text" /></p>
+        <p>Enter rule: <input name="rule" type="text" id="rule" /></p>
+        <div id="viewspace" style="align-self: center;">
+          <div class="codebox">
+            <div class="selall">
+              Code: <a href="" onclick="selectCode(this); return false;">Select all</a>
+            </div>
+            <div>
+              <code id="code0"></code>
+            </div>
+          </div>
+          <div class="viewer">
+            <code id="code1"></code>
+            <br>
+            <canvas id="view"></canvas>
+          </div>
+          <a id="a"></a>
+        </div>
+        <button type="submit" id="go">Go!</button>
       </fieldset>
     </form>
   </body>
-  <script src="lv.js"></script>
+  <script src="http://catagolue.appspot.com/js/rle_tools.js"></script>
+  <script src="http://catagolue.appspot.com/js/codebox.js"></script>
   <script>
-    function apgaddr(text, rule) {
-      return "https://catagolue.appspot.com/object?apgcode=xp0_" + text + "&rule=" + rule;
-    }
-    function httpGetAsync(url, callback) {
-      var xmlHttp = new XMLHttpRequest();
-      xmlHttp.onreadystatechange = function() { 
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-          callback(xmlHttp.responseText);
+    document.getElementById("rule").value = "B3/S23";
+    var loc = window.location.href;
+    var query = (function(a) {
+      if (a.split("?").length == 1) { return 0 }
+      var parts = decodeURIComponent(a).split("?")[1].split("&");
+      var data = {};
+      for (i of parts) {
+        var j = i.split("=");
+        data[j[0]] = j[1]
       }
-      xmlHttp.open("GET", url, true); // true for asynchronous 
-      xmlHttp.send(null);
-    }
-    function load() {
-      var text = document.getElementById("text").value;
-      var rule = "b" + document.getElementById("b") + "s" + document.getElementById("s");
-      var address = apgaddr(text, rule);
-      httpGetAsync(address, function(contents) {
-        var rle = contents.split("<code id=\"code0\">")[1].split("</code>")[0];
-        document.getElementById("viewspace").innerText(rle)
-      });
-    }
-    document.getElementById("b").value = "3";
-    document.getElementById("s").value = "23";
-    document.getElementById("go").addEventListener("click", load);
+      document.getElementById("text").value = data.text;
+      document.getElementById("rule").value = data.rule;
+      var rle = cells_to_rle(decodeCanon("xp0_" + data.text)).replace("B3/S23", data.rule).replace("<br>", "\n");
+      document.getElementById("code0").innerText = rle;
+      document.getElementById("code1").innerText = rle + "\n#C [[ THEME 6 GPS 20 ]]";
+      document.getElementById("code0").style = "display: inherit;";
+      document.getElementById("view").style = "display: inherit;";
+    })(loc);
   </script>
+  <script src="http://catagolue.appspot.com/js/lv-plugin.js"></script>
 </html>
