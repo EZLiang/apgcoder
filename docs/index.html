@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Apg coder</title>
+    <meta name="LifeViewer" content="viewer code">
+    <style>
+      * {
+        cursor: pointer;
+      }
+      *:not(pre, code) {
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      pre, code {
+        font-family:'Courier New', Courier, monospace;
+      }
+      a {
+        color: #04F;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>APGcoder</h1>
+    <p>APGcode is from <a href="https://catagolue.appsopt.com/">Catagolue</a>.</p>
+    <form>
+      <fieldset>
+        <legend>APGcoding</legend>
+        <p>Enter text: <input type="text" id="text" /></p>
+        <p>Enter rule: B<input type="text" id="b" />/S<input type="text" id="b" /></p>
+        <div id="viewspace"></div>
+        <button id="go">Go!</button>
+      </fieldset>
+    </form>
+  </body>
+  <script src="lv.js"></script>
+  <script>
+    function apgaddr(text, rule) {
+      return "https://catagolue.appspot.com/object?apgcode=xp0_" + text + "&rule=" + rule;
+    }
+    function httpGetAsync(url, callback) {
+      var xmlHttp = new XMLHttpRequest();
+      xmlHttp.onreadystatechange = function() { 
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+          callback(xmlHttp.responseText);
+      }
+      xmlHttp.open("GET", url, true); // true for asynchronous 
+      xmlHttp.send(null);
+    }
+    function load() {
+      var text = document.getElementById("text").value;
+      var rule = "b" + document.getElementById("b") + "s" + document.getElementById("s");
+      var address = apgaddr(text, rule);
+      httpGetAsync(address, function(contents) {
+        var rle = contents.split("<code id=\"code0\">")[1].split("</code>")[0];
+        document.getElementById("viewspace").innerText(rle)
+      });
+    }
+    document.getElementById("b").value = "3";
+    document.getElementById("s").value = "23";
+    document.getElementById("go").addEventListener("click", load);
+  </script>
+</html>
